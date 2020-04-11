@@ -18,7 +18,7 @@ Example:
 	    ".mp3": folders["audio"]
     }
 ```
-In this example I have two folders, one named ``"vincents_images"`` and one named ``"my_music"``. The idea here is that the key in the ``folders`` dictionary is the name that will be referenced in the ``actions`` dicitonary and in the rest of the code. The value in the dictionary is the name you want your folder to have on your system (your actual folder name).
+In this example I have two folders, one named ``"vincents_images"`` and one named ``"my_music"``. The idea here is that the key in the ``folders`` dictionary is the name that will be referenced in the ``actions`` dictionary and in the rest of the code. The value in the dictionary is the name you want your folder to have on your system (your actual folder name).
 
 
 # How to install
