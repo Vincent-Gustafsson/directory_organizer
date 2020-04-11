@@ -1,4 +1,5 @@
 # About Directory Organizer
+[![Github All Releases](https://img.shields.io/github/downloads/Vincent-Gustafsson/directory_organizer/total.svg)]()
 
 This script is all about organizing files. My intent here is to make a organizer script that's easy to understand, yet fills your needs. It's really easy to edit to your needs!
 
