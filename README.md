@@ -24,7 +24,6 @@ In this example I have two folders, one named ``"vincents_images"`` and one name
 # How to install
 
  - Download the python file from the github repository.
- - Download the .exe file from the github repository.
  - use git - ``git clone https://www.github.com/vincent-gustafsson/direcotry_organizer``
 
 # How to run
@@ -34,5 +33,3 @@ In this example I have two folders, one named ``"vincents_images"`` and one name
  1. Open the terminal.
  2. Make sure you are in the correct directory.
  3. Type ``python organizer.py´´
-
-**Run the .exe file**
