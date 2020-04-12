@@ -24,7 +24,7 @@ In this example I have two folders, one named ``"vincents_images"`` and one name
 # How to install
 
  - Download the python file from the github repository.
- - use git - ``git clone https://www.github.com/vincent-gustafsson/direcotry_organizer``
+ - use git - ``git clone https://www.github.com/vincent-gustafsson/directory_organizer``
 
 # How to run
 
