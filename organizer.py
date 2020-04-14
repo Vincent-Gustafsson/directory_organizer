@@ -1,68 +1,76 @@
+import json
+from argparse import ArgumentParser
 from pathlib import Path
-
-# The folder you want to organize
-directory = Path("C:/Users/Vincent/Downloads")
-
-# The folders you want to have.
-# The keys are what you refer to in the code
-# The Values are the actual names of the folders that get creatad.
-folders = {
-    "images": "images",
-    "videos": "videos",
-    "exe_zip": "exe_zip",
-    "audio": "audio",
-    "other": "other"
-}
-
-# These are the "actions".
-# The keys are the file extensions you want to move into the specified folder.
-# The values are the folder you want the files with the extension to go in to.
-actions = {
-    ".png": folders["images"],
-    ".jpg": folders["images"],
-    ".gif": folders["images"],
-
-    ".mp4": folders["videos"],
-    ".mov": folders["videos"],
-    ".avi": folders["videos"],
-
-    ".exe": folders["exe_zip"],
-    ".rar": folders["exe_zip"],
-    ".zip": folders["exe_zip"],
-
-    ".wav": folders["audio"],
-    ".mp3": folders["audio"],
-    ".ogg": folders["audio"],
-    ".flac": folders["audio"],
-}
+from typing import Dict, List
 
 
-def create_directories(dir):
-    for dir_name in folders.values():
-        if dir.joinpath(dir_name) not in dir.iterdir():
-            dir.joinpath(dir_name).mkdir()
+def load_subdirs(subdirs_file: Path) -> Dict[str, str]:
+    return json.load(open(subdirs_file, 'r', encoding='utf-8'))
 
 
-def organize_folder(dir):
-    dir = Path(dir)
+def create_subdirs(dir: Path, subdirs: List[Path]) -> None:
+    for subdir in subdirs:
+        (dir / subdir).mkdir(exist_ok=True)
 
-    # dir.glob("*,*") is used to get all the files (and folders) in the directory.
+
+def organize_dir(dir: Path, actions: Dict[str, str], other: str) -> None:
+    # iterate over all files (and not subdirectories) in the directory
     for file in dir.glob("*.*"):
         if file.is_file():
-            # If the file has an extension that's in the actions and destination, move the file.
-            try:
-                dest_path = dir.joinpath(actions[file.suffix], file.name)
-                file.rename(dest_path)
+            try:  # if the file has a "known" extension, move it to its proper destination
+                file_dest = dir / actions[file.suffix.lower()] / file.name            
+            except KeyError:  # if the file has an "unkown" extension, move it into the "other" subdirectory
+                file_dest = dir / other / file.name
             
-            # If the file doesn't have an extension, move it into the "other" folder. 
-            except KeyError:
-                dest_path = dir.joinpath(folders["other"], file.name)
-                file.rename(dest_path)
+            # move the file
+            file.rename(file_dest)
+
+
+def main():
+    parser = ArgumentParser()
+    parser.add_argument('dir', type=str, metavar='PATH', help='Path to the directory to organize.')
+    parser.add_argument('subdirs_file', type=str, metavar='PATH', help='Path to the JSON-file containing the subdirectories.')
+    args = parser.parse_args()
+    args.dir = Path(args.dir)
+    args.subdirs_file = Path(args.subdirs_file)
+
+    # check if the directory exists
+    if not args.dir.is_dir():
+        raise ValueError(f'Directory {str(args.dir)} is not an actual directory.')
+
+    # check if the subdirs file is a JSON-file
+    if not args.subdirs_file.suffix.lower() == '.json':
+        raise ValueError(f'Subdirectories file {args.subdirs_file} is not an actual JSON-file.')
+    
+    # load the dictionary of subdirectories
+    subdirs = load_subdirs(args.subdirs_file)
+
+    # create a dictionary mapping file extensions to subdirectories
+    actions = {
+        ".png": subdirs["images"],
+        ".jpg": subdirs["images"],
+        ".gif": subdirs["images"],
+
+        ".mp4": subdirs["videos"],
+        ".mov": subdirs["videos"],
+        ".avi": subdirs["videos"],
+
+        ".exe": subdirs["exe_zip"],
+        ".rar": subdirs["exe_zip"],
+        ".zip": subdirs["exe_zip"],
+
+        ".wav": subdirs["audio"],
+        ".mp3": subdirs["audio"],
+        ".ogg": subdirs["audio"],
+        ".flac": subdirs["audio"],
+    }
+
+    # create the subdirectories (if they do not exist yet)
+    create_subdirs(args.dir, list(subdirs.values()))
+    
+    # organize the directory
+    organize_dir(args.dir, actions, subdirs["other"])
 
 
 if __name__ == "__main__":
-    # This function checks if the sub-folders exists. If they don't, create them.
-    create_directories(directory)
-    
-    organize_folder(directory)
-
+    main()
