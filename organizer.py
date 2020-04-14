@@ -1,12 +1,12 @@
 from pathlib import Path
 
-# The folder you want to organize
+# The dir you want to organize
 directory = Path("C:/Users/Vincent/Downloads")
 
-# The folders you want to have.
+# The subdirs you want to have.
 # The keys are what you refer to in the code
-# The Values are the actual names of the folders that get creatad.
-folders = {
+# The Values are the actual names of the subdirs that get creatad.
+subdirs = {
     "images": "images",
     "videos": "videos",
     "exe_zip": "exe_zip",
@@ -15,50 +15,50 @@ folders = {
 }
 
 # These are the "actions".
-# The keys are the file extensions you want to move into the specified folder.
-# The values are the folder you want the files with the extension to go in to.
+# The keys are the file extensions you want to move into the specified dir.
+# The values are the dir you want the files with the extension to go in to.
 actions = {
-    ".png": folders["images"],
-    ".jpg": folders["images"],
-    ".gif": folders["images"],
+    ".png": subdirs["images"],
+    ".jpg": subdirs["images"],
+    ".gif": subdirs["images"],
 
-    ".mp4": folders["videos"],
-    ".mov": folders["videos"],
-    ".avi": folders["videos"],
+    ".mp4": subdirs["videos"],
+    ".mov": subdirs["videos"],
+    ".avi": subdirs["videos"],
 
-    ".exe": folders["exe_zip"],
-    ".rar": folders["exe_zip"],
-    ".zip": folders["exe_zip"],
+    ".exe": subdirs["exe_zip"],
+    ".rar": subdirs["exe_zip"],
+    ".zip": subdirs["exe_zip"],
 
-    ".wav": folders["audio"],
-    ".mp3": folders["audio"],
-    ".ogg": folders["audio"],
-    ".flac": folders["audio"],
+    ".wav": subdirs["audio"],
+    ".mp3": subdirs["audio"],
+    ".ogg": subdirs["audio"],
+    ".flac": subdirs["audio"],
 }
 
 
-def create_directories(dir):
-    for subdir in folders.values():
+def create_subdirs(dir, subdirs):
+    for subdir in subdirs:
         (dir / subdir).mkdir(exist_ok=True)
 
 
-def organize_folder(dir):
-    # dir.glob("*,*") is used to get all the files (and folders) in the directory.
+def organize_dir(dir):
+    # dir.glob("*,*") is used to get all the files (and subdirs) in the directory.
     for file in dir.glob("*.*"):
         if file.is_file():
             # If the file has an extension that's in the actions and destination, move the file.
             try:
                 dest_path = dir / actions[file.suffix] / file.name            
-            # If the file doesn't have an extension, move it into the "other" folder. 
+            # If the file doesn't have an extension, move it into the "other" dir. 
             except KeyError:
-                dest_path = dir / folders["other"] / file.name
+                dest_path = dir / subdirs["other"] / file.name
             
             file.rename(dest_path)
 
 
 if __name__ == "__main__":
-    # This function checks if the sub-folders exists. If they don't, create them.
-    create_directories(directory)
+    # This function checks if the sub-subdirs exists. If they don't, create them.
+    create_subdirs(directory, subdirs.values())
     
-    organize_folder(directory)
+    organize_dir(directory)
 
