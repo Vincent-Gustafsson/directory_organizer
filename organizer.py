@@ -38,26 +38,22 @@ actions = {
 
 
 def create_directories(dir):
-    for dir_name in folders.values():
-        if dir.joinpath(dir_name) not in dir.iterdir():
-            dir.joinpath(dir_name).mkdir()
+    for subdir in folders.values():
+        (dir / subdir).mkdir(exist_ok=True)
 
 
 def organize_folder(dir):
-    dir = Path(dir)
-
     # dir.glob("*,*") is used to get all the files (and folders) in the directory.
     for file in dir.glob("*.*"):
         if file.is_file():
             # If the file has an extension that's in the actions and destination, move the file.
             try:
-                dest_path = dir.joinpath(actions[file.suffix], file.name)
-                file.rename(dest_path)
-            
+                dest_path = dir / actions[file.suffix] / file.name            
             # If the file doesn't have an extension, move it into the "other" folder. 
             except KeyError:
-                dest_path = dir.joinpath(folders["other"], file.name)
-                file.rename(dest_path)
+                dest_path = dir / folders["other"] / file.name
+            
+            file.rename(dest_path)
 
 
 if __name__ == "__main__":
