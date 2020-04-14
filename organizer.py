@@ -1,7 +1,5 @@
+from argparse import ArgumentParser
 from pathlib import Path
-
-# The dir you want to organize
-directory = Path("C:/Users/Vincent/Downloads")
 
 # The subdirs you want to have.
 # The keys are what you refer to in the code
@@ -56,9 +54,21 @@ def organize_dir(dir):
             file.rename(dest_path)
 
 
-if __name__ == "__main__":
-    # This function checks if the sub-subdirs exists. If they don't, create them.
-    create_subdirs(directory, subdirs.values())
-    
-    organize_dir(directory)
+def main():
+    parser = ArgumentParser()
+    parser.add_argument('dir', type=str, metavar='PATH', help='Path to the directory to organize.')
+    args = parser.parse_args()
+    args.dir = Path(args.dir)
 
+    # check if the directory exists
+    if not args.dir.is_dir():
+        raise ValueError(f'Directory {str(args.dir)} is not an actual directory.')
+
+    # create the subdirectories (if they do not exist yet)
+    create_subdirs(args.dir, subdirs.values())
+    
+    organize_dir(args.dir)
+
+
+if __name__ == "__main__":
+    main()
