@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 from pathlib import Path
+from typing import List
 
 # The subdirs you want to have.
 # The keys are what you refer to in the code
@@ -35,12 +36,12 @@ actions = {
 }
 
 
-def create_subdirs(dir, subdirs):
+def create_subdirs(dir: Path, subdirs: List[Path]):
     for subdir in subdirs:
         (dir / subdir).mkdir(exist_ok=True)
 
 
-def organize_dir(dir):
+def organize_dir(dir: Path):
     # dir.glob("*,*") is used to get all the files (and subdirs) in the directory.
     for file in dir.glob("*.*"):
         if file.is_file():
@@ -65,7 +66,7 @@ def main():
         raise ValueError(f'Directory {str(args.dir)} is not an actual directory.')
 
     # create the subdirectories (if they do not exist yet)
-    create_subdirs(args.dir, subdirs.values())
+    create_subdirs(args.dir, list(subdirs.values()))
     
     organize_dir(args.dir)
 
