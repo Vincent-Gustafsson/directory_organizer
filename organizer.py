@@ -8,23 +8,22 @@ def load_subdirs(subdirs_file: Path) -> Dict[str, str]:
     return json.load(open(subdirs_file, 'r', encoding='utf-8'))
 
 
-def create_subdirs(dir: Path, subdirs: List[Path]):
+def create_subdirs(dir: Path, subdirs: List[Path]) -> None:
     for subdir in subdirs:
         (dir / subdir).mkdir(exist_ok=True)
 
 
 def organize_dir(dir: Path, actions: Dict[str, str], other: str) -> None:
-    # dir.glob("*,*") is used to get all the files (and subdirs) in the directory.
+    # iterate over all files (and not subdirectories) in the directory
     for file in dir.glob("*.*"):
         if file.is_file():
-            # If the file has an extension that's in the actions and destination, move the file.
-            try:
-                dest_path = dir / actions[file.suffix.lower()] / file.name            
-            # If the file doesn't have an extension, move it into the "other" dir. 
-            except KeyError:
-                dest_path = dir / other / file.name
+            try:  # if the file has a "known" extension, move it to its proper destination
+                file_dest = dir / actions[file.suffix.lower()] / file.name            
+            except KeyError:  # if the file has an "unkown" extension, move it into the "other" subdirectory
+                file_dest = dir / other / file.name
             
-            file.rename(dest_path)
+            # move the file
+            file.rename(file_dest)
 
 
 def main():
@@ -46,9 +45,7 @@ def main():
     # load the dictionary of subdirectories
     subdirs = load_subdirs(args.subdirs_file)
 
-    # These are the "actions".
-    # The keys are the file extensions you want to move into the specified dir.
-    # The values are the dir you want the files with the extension to go in to.
+    # create a dictionary mapping file extensions to subdirectories
     actions = {
         ".png": subdirs["images"],
         ".jpg": subdirs["images"],
@@ -71,6 +68,7 @@ def main():
     # create the subdirectories (if they do not exist yet)
     create_subdirs(args.dir, list(subdirs.values()))
     
+    # organize the directory
     organize_dir(args.dir, actions, subdirs["other"])
 
 
